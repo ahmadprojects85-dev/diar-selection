@@ -1,0 +1,131 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Categories ───────────────────────────────────────────
+model Category {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  nameAr        String?
+  nameKu        String?
+  slug          String    @unique
+  description   String?   @db.Text
+  descriptionAr String?   @db.Text
+  descriptionKu String?   @db.Text
+  image         String?
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+
+  @@map("categories")
+}
+
+// ─── Brands ───────────────────────────────────────────────
+model Brand {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  nameAr        String?
+  nameKu        String?
+  slug          String    @unique
+  descriptionAr String?   @db.Text
+  descriptionKu String?   @db.Text
+  logo          String?
+  website   String?
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+
+  @@map("brands")
+}
+
+// ─── Products ─────────────────────────────────────────────
+model Product {
+  id            String   @id @default(cuid())
+  name          String
+  nameAr        String?
+  nameKu        String?
+  slug          String   @unique
+  description   String?  @db.Text
+  descriptionAr String?  @db.Text
+  descriptionKu String?  @db.Text
+  longDescription   String?  @db.Text
+  longDescriptionAr String?  @db.Text
+  longDescriptionKu String?  @db.Text
+  price         Float
+  originalPrice Float?
+  currency      String   @default("IQD")
+  image         String
+  images        String?  @db.Text  // JSON array of image URLs
+  categoryId    String
+  brandId       String?
+  isBestSeller  Boolean  @default(false)
+  isFeatured    Boolean  @default(false)
+  inStock       Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  category Category @relation(fields: [categoryId], references: [id])
+  brand    Brand?   @relation(fields: [brandId], references: [id])
+
+  @@index([categoryId])
+  @@index([brandId])
+  @@index([isBestSeller])
+  @@index([isFeatured])
+  @@map("products")
+}
+
+// ─── Hero Slides ──────────────────────────────────────────
+model HeroSlide {
+  id          String   @id @default(cuid())
+  title       String
+  subtitle    String?
+  description String?  @db.Text
+  image       String
+  buttonText  String?
+  buttonLink  String?
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("hero_slides")
+}
+
+// ─── Site Settings ────────────────────────────────────────
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String @db.Text
+
+  @@map("site_settings")
+}
+
+// ─── Brewing Methods ──────────────────────────────────────
+model BrewingMethod {
+  id            String   @id @default(cuid())
+  name          String
+  nameAr        String?
+  nameKu        String?
+  tagline       String?
+  taglineAr     String?
+  taglineKu     String?
+  description   String?  @db.Text
+  descriptionAr String?  @db.Text
+  descriptionKu String?  @db.Text
+  image         String?
+  time          String?
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("brewing_methods")
+}

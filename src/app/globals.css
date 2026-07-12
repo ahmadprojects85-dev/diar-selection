@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+/* ===== LIGHT MODE (Default) ===== */
+@theme {
+  /* Backgrounds — clean off-white/cream palette */
+  --color-bg-primary: #F5F5F5;
+  --color-bg-card: #ffffff;
+  --color-bg-elevated: #eeeeee;
+  --color-bg-hover: #e5e5e5;
+  --color-bg-secondary: #EAEAEA;
+  
+  /* Brand Palette from PDF */
+  --color-brand-gold: #d49f37;
+  --color-brand-brown: #251B12;
+  --color-brand-green: #646D5A;
+  --color-brand-beige: #D9D0BF;
+
+  /* Gold accent — stays same in both modes */
+  --color-gold: #d49f37;
+  --color-gold-light: #e0b355;
+  --color-gold-dark: #b88520;
+  
+  /* Text — dark brown from brand palette */
+  --color-text-primary: #251B12;
+  --color-text-secondary: #4A3D2E;
+  --color-text-muted: #7A6E5E;
+
+  /* Borders */
+  --color-border: #B8AD9A;
+  --color-border-light: #A89B87;
+
+  --font-serif: var(--font-serif), Georgia, serif;
+  --font-sans: var(--font-sans), var(--font-osage), system-ui, -apple-system, sans-serif;
+  --font-arabic: var(--font-arabic), system-ui, sans-serif;
+}
+
+/* ===== RTL Mode — Kurdish & Arabic ===== */
+[dir="rtl"] {
+  font-family: var(--font-arabic);
+}
+
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4 {
+  font-family: var(--font-arabic);
+  letter-spacing: 0 !important;
+}
+
+/* ===== DARK MODE ===== */
+[data-theme="dark"] {
+  --color-bg-primary: #0a0a0a;
+  --color-bg-card: #141414;
+  --color-bg-elevated: #1a1a1a;
+  --color-bg-hover: #1f1f1f;
+  --color-bg-secondary: #111111;
+  
+  --color-text-primary: #f5f5f5;
+  --color-text-secondary: #a0a0a0;
+  --color-text-muted: #666666;
+
+  --color-border: #222222;
+  --color-border-light: #2a2a2a;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-gold);
+  color: #fff;
+}
+
+/* Gold gradient text */
+.text-gold-gradient {
+  background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold), var(--color-gold-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtle card hover */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] .card-hover:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Image zoom on hover */
+.img-zoom {
+  transition: transform 0.5s ease;
+}
+
+.img-zoom:hover {
+  transform: scale(1.05);
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Logo filtering for light/dark mode */
+.theme-logo {
+  filter: brightness(0); /* Black for light mode */
+  transition: filter 0.3s ease;
+}
+
+[data-theme="dark"] .theme-logo {
+  filter: brightness(0) invert(1); /* White for dark mode */
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeUpLuxury {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up-luxury {
+  opacity: 0;
+  animation: fadeUpLuxury 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Staggered animation */
+.stagger-1 { animation-delay: 100ms; }
+.stagger-2 { animation-delay: 200ms; }
+.stagger-3 { animation-delay: 300ms; }
+.stagger-4 { animation-delay: 400ms; }
+
+/* Star rating */
+.star-filled {
+  color: var(--color-gold);
+}
+
+.star-empty {
+  color: var(--color-text-muted);
+}
+
+/* Smooth transitions for theme switching */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+/* Exclude elements where transition causes problems */
+a, button, input, textarea, select,
+.img-zoom, .animate-fade-in, .card-hover {
+  transition-property: all;
+}
+
+/* Global accessible focus states */
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-bg-primary), 0 0 0 4px var(--color-gold);
+}
