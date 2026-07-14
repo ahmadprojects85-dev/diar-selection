@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client/edge";
 import { connect } from "@tidbcloud/serverless";
 import { PrismaTiDBCloud } from "@tidbcloud/prisma-adapter";
 
@@ -6,15 +6,11 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-// Conditionally use TiDB Serverless Driver Adapter on the Edge (Cloudflare)
+// Always use the TiDB Cloud Serverless Driver Adapter (works in Node and Edge runtime)
 const getPrismaClient = () => {
-  const isEdge = process.env.NEXT_RUNTIME === "edge" || typeof (globalThis as any).EdgeRuntime !== "undefined";
-  if (isEdge) {
-    const connection = connect({ url: process.env.DATABASE_URL });
-    const adapter = new PrismaTiDBCloud(connection);
-    return new PrismaClient({ adapter });
-  }
-  return new PrismaClient();
+  const connection = connect({ url: process.env.DATABASE_URL });
+  const adapter = new PrismaTiDBCloud(connection);
+  return new PrismaClient({ adapter });
 };
 
 export const prisma = globalForPrisma.prisma ?? getPrismaClient();
