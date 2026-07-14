@@ -1,0 +1,20 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/_global-error/page": "/_global-error",
+  "/api/brands/[id]/route": "/api/brands/[id]",
+  "/api/brands/route": "/api/brands",
+  "/api/brewing-methods/[id]/route": "/api/brewing-methods/[id]",
+  "/api/categories/[id]/route": "/api/categories/[id]",
+  "/api/categories/route": "/api/categories",
+  "/api/products/[id]/route": "/api/products/[id]",
+  "/api/products/route": "/api/products",
+  "/api/products/search/route": "/api/products/search",
+  "/favicon.ico/route": "/favicon.ico",
+  "/robots.txt/route": "/robots.txt",
+  "/api/brewing-methods/route": "/api/brewing-methods",
+  "/sitemap.xml/route": "/sitemap.xml",
+  "/page": "/",
+  "/products/page": "/products",
+  "/products/[slug]/page": "/products/[slug]",
+  "/wishlist/page": "/wishlist"
+}
