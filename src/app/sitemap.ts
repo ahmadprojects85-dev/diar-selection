@@ -1,15 +1,22 @@
 import { MetadataRoute } from 'next'
 import { getVisibleProducts } from '@/lib/products'
 
+export const dynamic = 'force-dynamic'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const products = await getVisibleProducts()
-  
-  const productUrls = products.map((product) => ({
-    url: `https://diarselection.com/products/${product.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }))
+  let productUrls: MetadataRoute.Sitemap = []
+
+  try {
+    const products = await getVisibleProducts()
+    productUrls = products.map((product) => ({
+      url: `https://diarselection.com/products/${product.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }))
+  } catch (error) {
+    console.warn("Skipping dynamic product sitemap generation due to missing database connection during build:", error)
+  }
 
   return [
     {
