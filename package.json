@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:worker": "npx @opennextjs/cloudflare build && cp .open-next/worker.js .open-next/assets/_worker.js && cp -r .open-next/cloudflare .open-next/middleware .open-next/.build .open-next/server-functions .open-next/assets/",
+    "build:worker": "npx @opennextjs/cloudflare build && npx esbuild .open-next/server-functions/default/handler.mjs --minify --allow-overwrite --outfile=.open-next/server-functions/default/handler.mjs && cp .open-next/worker.js .open-next/assets/_worker.js && cp -r .open-next/cloudflare .open-next/middleware .open-next/.build .open-next/server-functions .open-next/assets/",
     "start": "next start",
     "lint": "eslint"
   },
