@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Heart, ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import type { StoreProduct } from "@/lib/products";
 import { useWishlist } from "@/context/WishlistContext";
-import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
+import { useState } from "react";
+import { formatPrice } from "@/lib/price";
 
 interface ProductCardProps {
   product: StoreProduct;
@@ -33,8 +35,15 @@ export function ProductCard({ product }: ProductCardProps) {
     }
   };
 
+  const [selectedColorIndex, setSelectedColorIndex] = useState<number>(-1);
+
   // Gracefully fallback to the first gallery image if the main image is missing
-  const mainImg = product.image || (product.images && product.images.length > 0 ? product.images[0] : null);
+  let mainImg = product.image || (product.images && product.images.length > 0 ? product.images[0] : null);
+  
+  if (selectedColorIndex >= 0 && product.colors && product.colors[selectedColorIndex]) {
+    mainImg = product.colors[selectedColorIndex].image || mainImg;
+  }
+  
   const bgImage = mainImg 
     ? (mainImg.startsWith('http') || mainImg.startsWith('/') ? mainImg : `/${mainImg}`) 
     : '';
@@ -88,12 +97,31 @@ export function ProductCard({ product }: ProductCardProps) {
           <p className="text-[10px] sm:text-[12px] font-medium tracking-widest uppercase text-text-muted/80">
             {product.category}
           </p>
+          
+          {/* Colors */}
+          {product.colors && product.colors.length > 0 && (
+            <div className="flex justify-center gap-2 mt-2">
+              {product.colors.map((color, index) => (
+                <button
+                  key={color.id || index}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedColorIndex(index);
+                  }}
+                  onMouseEnter={() => setSelectedColorIndex(index)}
+                  className={`w-5 h-5 rounded-full border-2 transition-all ${selectedColorIndex === index ? 'border-gold scale-110' : 'border-border/50 hover:scale-110'}`}
+                  style={{ backgroundColor: color.colorCode }}
+                  title={color.name}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Price + Action */}
         <div className="pt-2 sm:pt-4 flex flex-col gap-2.5 sm:gap-3 mt-auto">
           <span className="font-bold text-[17px] sm:text-[22px] text-text-primary break-words tracking-tight">
-            ${product.price.toFixed(2)}
+            {formatPrice(product.price, language)}
           </span>
           
           <div className="flex items-center gap-2">
