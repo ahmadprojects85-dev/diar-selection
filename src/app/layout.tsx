@@ -79,6 +79,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
@@ -87,7 +90,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${notoSans.variable} ${notoOsage.variable} ${playfair.variable} ${notoArabic.variable} ${scriptFont.variable}`}>
+    <html lang="ku" className={`${notoSans.variable} ${notoOsage.variable} ${playfair.variable} ${notoArabic.variable} ${scriptFont.variable}`}>
       <body className="bg-bg-primary text-text-primary font-sans antialiased overflow-x-hidden">
         <ThemeProvider>
           <LanguageProvider>
