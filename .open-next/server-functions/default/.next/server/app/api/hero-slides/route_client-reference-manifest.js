@@ -1,0 +1,1 @@
+globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/api/hero-slides/route"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"C:\\Users\\pc\\Desktop\\diar collection\\diar-selection\\src\\app\\api\\hero-slides\\route":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}};
