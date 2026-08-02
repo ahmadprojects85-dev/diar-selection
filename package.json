@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build --webpack",
+    "build": "npx prisma generate && npx @opennextjs/cloudflare build && node copy_assets.mjs && npx esbuild .open-next/server-functions/default/handler.mjs --minify --allow-overwrite --outfile=.open-next/server-functions/default/handler.mjs",
     "build:worker": "npx prisma generate && npx @opennextjs/cloudflare build && node copy_assets.mjs && npx esbuild .open-next/server-functions/default/handler.mjs --minify --allow-overwrite --outfile=.open-next/server-functions/default/handler.mjs",
     "restore-admin": "node restore_admin.mjs",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
-    "@opennextjs/cloudflare": "1.19.11",
+    "@opennextjs/cloudflare": "latest",
     "@prisma/client": "^5.22.0",
     "@tidbcloud/prisma-adapter": "^5.20.0",
     "@tidbcloud/serverless": "^0.3.0",
@@ -35,6 +35,6 @@
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "wrangler": "4.118.0"
+    "wrangler": "latest"
   }
 }
