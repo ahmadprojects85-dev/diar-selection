@@ -1,1 +1,0 @@
-globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/api/admin/logout/route"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"C:\\Users\\pc\\Desktop\\diar collection\\diar-selection\\src\\app\\api\\admin\\logout\\route":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}};
