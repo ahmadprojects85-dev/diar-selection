@@ -1,3 +1,4 @@
+// Production deployment build for Diar Selection
 import type { Metadata } from "next";
 import { Noto_Sans, Noto_Sans_Osage, Playfair_Display, Noto_Kufi_Arabic, Great_Vibes } from "next/font/google";
 import "./globals.css";
