@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "npx prisma generate && npx @opennextjs/cloudflare build && node copy_assets.mjs && npx esbuild .open-next/server-functions/default/handler.mjs --minify --allow-overwrite --outfile=.open-next/server-functions/default/handler.mjs",
+    "build": "next build --webpack",
     "build:worker": "npx prisma generate && npx @opennextjs/cloudflare build && node copy_assets.mjs && npx esbuild .open-next/server-functions/default/handler.mjs --minify --allow-overwrite --outfile=.open-next/server-functions/default/handler.mjs",
     "restore-admin": "node restore_admin.mjs",
     "start": "next start",
