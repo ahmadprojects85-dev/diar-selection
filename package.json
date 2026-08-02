@@ -11,7 +11,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@opennextjs/cloudflare": "latest",
+    "@opennextjs/cloudflare": "1.19.11",
     "@prisma/client": "^5.22.0",
     "@tidbcloud/prisma-adapter": "^5.20.0",
     "@tidbcloud/serverless": "^0.3.0",
@@ -35,6 +35,6 @@
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "wrangler": "latest"
+    "wrangler": "4.118.0"
   }
 }

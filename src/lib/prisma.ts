@@ -5,7 +5,16 @@ const DEFAULT_DB_URL = "mysql://YR4RFaxG4nkiGLt.root:3RC5KIq71eW1jUga@gateway01.
 function getConn() {
   const rawUrl = process.env.DATABASE_URL || DEFAULT_DB_URL;
   const url = rawUrl.trim().replace(/^["']|["']$/g, '');
-  return connect({ url });
+  return connect({
+    url,
+    fetch: (input: any, init: any = {}) => {
+      return fetch(input, {
+        ...init,
+        cache: 'force-cache',
+        next: { revalidate: 60 }
+      });
+    }
+  });
 }
 
 function formatRow(row: any) {
