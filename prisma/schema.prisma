@@ -14,10 +14,12 @@ model Category {
   name          String    @unique
   nameAr        String?
   nameKu        String?
+  nameKm        String?
   slug          String    @unique
   description   String?   @db.Text
   descriptionAr String?   @db.Text
   descriptionKu String?   @db.Text
+  descriptionKm String?   @db.Text
   image         String?
   sortOrder   Int       @default(0)
   createdAt   DateTime  @default(now())
@@ -33,9 +35,11 @@ model Brand {
   name          String    @unique
   nameAr        String?
   nameKu        String?
+  nameKm        String?
   slug          String    @unique
   descriptionAr String?   @db.Text
   descriptionKu String?   @db.Text
+  descriptionKm String?   @db.Text
   logo          String?
   website   String?
   sortOrder Int       @default(0)
@@ -52,13 +56,16 @@ model Product {
   name          String
   nameAr        String?
   nameKu        String?
+  nameKm        String?
   slug          String   @unique
   description   String?  @db.Text
   descriptionAr String?  @db.Text
   descriptionKu String?  @db.Text
+  descriptionKm String?  @db.Text
   longDescription   String?  @db.Text
   longDescriptionAr String?  @db.Text
   longDescriptionKu String?  @db.Text
+  longDescriptionKm String?  @db.Text
   price         Float
   originalPrice Float?
   currency      String   @default("IQD")
@@ -68,10 +75,12 @@ model Product {
   brandId       String?
   isBestSeller  Boolean  @default(false)
   isFeatured    Boolean  @default(false)
+  isNew         Boolean  @default(false)
   inStock       Boolean  @default(true)
   sortOrder     Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  colors        ProductColor[]
 
   category Category @relation(fields: [categoryId], references: [id])
   brand    Brand?   @relation(fields: [brandId], references: [id])
@@ -83,13 +92,31 @@ model Product {
   @@map("products")
 }
 
+model ProductColor {
+  id        String   @id @default(cuid())
+  productId String
+  name      String   // e.g., "Green", "White"
+  colorCode String   // e.g., "#00FF00"
+  image     String
+  
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@index([productId])
+  @@map("product_colors")
+}
+
 // ─── Hero Slides ──────────────────────────────────────────
 model HeroSlide {
   id          String   @id @default(cuid())
-  title       String
+  title       String?
   subtitle    String?
   description String?  @db.Text
+  textEn      String?  @db.Text
+  textAr      String?  @db.Text
+  textKu      String?  @db.Text
+  textKm      String?  @db.Text
   image       String
+  mobileImage String?
   buttonText  String?
   buttonLink  String?
   isActive    Boolean  @default(true)
@@ -115,12 +142,15 @@ model BrewingMethod {
   name          String
   nameAr        String?
   nameKu        String?
+  nameKm        String?
   tagline       String?
   taglineAr     String?
   taglineKu     String?
+  taglineKm     String?
   description   String?  @db.Text
   descriptionAr String?  @db.Text
   descriptionKu String?  @db.Text
+  descriptionKm String?  @db.Text
   image         String?
   time          String?
   sortOrder     Int      @default(0)
@@ -129,3 +159,66 @@ model BrewingMethod {
 
   @@map("brewing_methods")
 }
+
+// ─── News Articles ──────────────────────────────────────────
+model NewsArticle {
+  id            String   @id @default(cuid())
+  
+  tag           String
+  tagAr         String?
+  tagKu         String?
+  tagKm         String?
+  
+  title         String
+  titleAr       String?
+  titleKu       String?
+  titleKm       String?
+  
+  excerpt       String   @db.Text
+  excerptAr     String?  @db.Text
+  excerptKu     String?  @db.Text
+  excerptKm     String?  @db.Text
+  
+  image         String
+  images        String?  @db.Text
+  
+  isFeatured    Boolean  @default(false)
+  sortOrder     Int      @default(0)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("news_articles")
+}
+
+// ─── Orders ─────────────────────────────────────────────────
+model Order {
+  id              String      @id @default(cuid())
+  referenceId     String      @unique
+  customerName    String
+  phone           String
+  city            String
+  address         String
+  totalAmount     Float
+  status          String      @default("PENDING") // PENDING, PAID, FAILED, CANCELLED
+  items           OrderItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  productName String
+  price       Float
+  quantity    Int
+  color       String?
+
+  @@index([orderId])
+  @@map("order_items")
+}
+

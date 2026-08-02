@@ -58,8 +58,8 @@ export function AboutSection() {
               <span className="block font-bold">{t("aboutTitle1")}</span>
               <span className="block font-bold">{t("aboutTitle2")}</span>
               <span 
-                className="block text-gold mt-1 sm:mt-2 tracking-normal" 
-                style={{ fontFamily: 'var(--font-script), cursive', fontSize: '1.4em', lineHeight: '0.8', transform: 'rotate(-2deg)' }}
+                className={`block text-gold tracking-normal ${isRTL ? 'mt-4 sm:mt-5' : 'mt-1 sm:mt-2'}`} 
+                style={{ fontFamily: 'var(--font-script), cursive', fontSize: isRTL ? '1.2em' : '1.4em', lineHeight: isRTL ? '1.2' : '0.8', transform: 'rotate(-2deg)' }}
               >
                 {t("aboutTitle3")}
               </span>

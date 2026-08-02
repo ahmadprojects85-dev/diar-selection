@@ -7,7 +7,8 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+export const fetchCache = "force-cache";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -39,11 +40,22 @@ export default async function ProductPage({ params }: PageProps) {
     notFound();
   }
 
-  // Get related products (same category, exclude current)
+  // Get related products: 3/4 from same category, 1/4 from another category
   const visibleProducts = await getVisibleProducts();
-  const related = visibleProducts
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
+  const sameCategoryProducts = visibleProducts.filter(
+    (p: any) => p.category === product.category && p.id !== product.id
+  );
+  const diffCategoryProducts = visibleProducts.filter(
+    (p: any) => p.category !== product.category && p.id !== product.id
+  );
+
+  const sameCategoryCount = Math.min(3, sameCategoryProducts.length);
+  const diffCategoryCount = 4 - sameCategoryCount;
+
+  const relatedSame = sameCategoryProducts.slice(0, sameCategoryCount);
+  const relatedDiff = diffCategoryProducts.slice(0, diffCategoryCount);
+
+  const related = [...relatedSame, ...relatedDiff];
 
   return (
     <>

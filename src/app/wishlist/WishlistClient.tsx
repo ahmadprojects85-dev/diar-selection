@@ -1,17 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Heart, ArrowRight } from "lucide-react";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
 import { ProductCard } from "@/components/ProductCard";
+import { GridControls, getGridClass, GridColumns } from "@/components/GridControls";
 
 export function WishlistClient() {
   const { wishlist } = useWishlist();
   const { addToCart } = useCart();
+  const [columns, setColumns] = useState<GridColumns>(4);
 
   return (
-    <div className="pt-20 lg:pt-24 pb-20 min-h-screen flex flex-col">
+    <div className="pt-24 lg:pt-32 pb-20 min-h-screen flex flex-col">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-text-muted mb-8">
@@ -53,12 +56,16 @@ export function WishlistClient() {
         </div>
 
         {wishlist.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-5">
-            {/* The wishlist items are minimal StoreProduct objects (missing description etc) but have enough for ProductCard */}
-            {wishlist.map((item) => (
-              <ProductCard key={item.id} product={item as any} />
-            ))}
-          </div>
+          <>
+            <div className="mb-6 flex justify-end">
+              <GridControls columns={columns} onChange={setColumns} />
+            </div>
+            <div className={`grid ${getGridClass(columns)} gap-4 lg:gap-5 transition-all duration-300`}>
+              {wishlist.map((item) => (
+                <ProductCard key={item.id} product={item as any} />
+              ))}
+            </div>
+          </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-20">
             <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6">

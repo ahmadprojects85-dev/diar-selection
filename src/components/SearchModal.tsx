@@ -4,13 +4,17 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Search, X, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { StoreProduct } from "@/lib/products";
+import { useLanguage } from "@/context/LanguageContext";
+import { formatPrice } from "@/lib/price";
 
 interface SearchModalProps {
   open: boolean;
   onClose: () => void;
 }
 
+
 export function SearchModal({ open, onClose }: SearchModalProps) {
+  const { language } = useLanguage();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<StoreProduct[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -125,7 +129,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-gold font-medium text-sm">
-                      ${product.price.toFixed(2)}
+                      {formatPrice(product.price, language)}
                     </span>
                     <ArrowRight
                       size={14}

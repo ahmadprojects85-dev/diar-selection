@@ -20,6 +20,13 @@ interface BrewingMethod {
   name: string;
 }
 
+interface ProductColor {
+  id?: string;
+  name: string;
+  colorCode: string;
+  image: string;
+}
+
 interface ProductFormProps {
   productId?: string; // If editing
 }
@@ -34,19 +41,23 @@ export function ProductForm({ productId }: ProductFormProps) {
   const [uploading, setUploading] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [extraImages, setExtraImages] = useState<string[]>([]);
+  const [colors, setColors] = useState<ProductColor[]>([]);
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
     name: "",
     nameAr: "",
     nameKu: "",
+    nameKm: "",
     slug: "",
     description: "",
     descriptionAr: "",
     descriptionKu: "",
+    descriptionKm: "",
     longDescription: "",
     longDescriptionAr: "",
     longDescriptionKu: "",
+    longDescriptionKm: "",
     price: "",
     originalPrice: "",
     currency: "IQD",
@@ -54,6 +65,7 @@ export function ProductForm({ productId }: ProductFormProps) {
     categoryId: "",
     brewingMethodId: "",
     isBestSeller: false,
+    isNew: false,
     inStock: true,
     sortOrder: "0",
   });
@@ -79,13 +91,16 @@ export function ProductForm({ productId }: ProductFormProps) {
           name: product.name || "",
           nameAr: product.nameAr || "",
           nameKu: product.nameKu || "",
+          nameKm: product.nameKm || "",
           slug: product.slug || "",
           description: product.description || "",
           descriptionAr: product.descriptionAr || "",
           descriptionKu: product.descriptionKu || "",
+          descriptionKm: product.descriptionKm || "",
           longDescription: product.longDescription || "",
           longDescriptionAr: product.longDescriptionAr || "",
           longDescriptionKu: product.longDescriptionKu || "",
+          longDescriptionKm: product.longDescriptionKm || "",
           price: String(product.price || ""),
           originalPrice: product.originalPrice
             ? String(product.originalPrice)
@@ -95,6 +110,7 @@ export function ProductForm({ productId }: ProductFormProps) {
           categoryId: product.categoryId || "",
           brewingMethodId: product.brewingMethodId || "",
           isBestSeller: product.isBestSeller || false,
+          isNew: product.isNew || false,
           inStock: product.inStock !== false,
           sortOrder: String(product.sortOrder || "0"),
         });
@@ -104,6 +120,9 @@ export function ProductForm({ productId }: ProductFormProps) {
             const parsed = typeof product.images === "string" ? JSON.parse(product.images) : product.images;
             if (Array.isArray(parsed)) setExtraImages(parsed);
           } catch { /* ignore parse errors */ }
+        }
+        if (product.colors && Array.isArray(product.colors)) {
+          setColors(product.colors);
         }
       });
   }, [productId]);
@@ -202,6 +221,7 @@ export function ProductForm({ productId }: ProductFormProps) {
             : null,
           sortOrder: form.sortOrder ? parseInt(form.sortOrder) : 0,
           images: extraImages.length > 0 ? extraImages : null,
+          colors: colors.length > 0 ? colors : undefined,
         }),
       });
 
@@ -272,10 +292,10 @@ export function ProductForm({ productId }: ProductFormProps) {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               <div>
                 <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">
-                  Arabic Name
+                  Arabic Name (العربية)
                 </label>
                 <input
                   type="text"
@@ -288,7 +308,7 @@ export function ProductForm({ productId }: ProductFormProps) {
               </div>
               <div>
                 <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">
-                  Kurdish Name
+                  Kurdish Sorani Name (سۆرانی)
                 </label>
                 <input
                   type="text"
@@ -297,6 +317,18 @@ export function ProductForm({ productId }: ProductFormProps) {
                   placeholder="ناوی کوردی"
                   dir="rtl"
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/15 focus:outline-none focus:border-[#d49f37] transition-colors text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] uppercase tracking-widest text-[#d49f37] mb-2 font-bold">
+                  Kurdish Kurmanji Name (کرمانجی)
+                </label>
+                <input
+                  type="text"
+                  value={form.nameKm}
+                  onChange={(e) => setForm((prev) => ({ ...prev, nameKm: e.target.value }))}
+                  placeholder="Navê Kurmancî..."
+                  className="w-full px-4 py-3 bg-white/5 border border-[#d49f37]/40 rounded-lg text-white placeholder:text-white/15 focus:outline-none focus:border-[#d49f37] transition-colors text-sm"
                 />
               </div>
             </div>
@@ -316,7 +348,7 @@ export function ProductForm({ productId }: ProductFormProps) {
               />
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               <div>
                 <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">
                   Arabic Description
@@ -332,7 +364,7 @@ export function ProductForm({ productId }: ProductFormProps) {
               </div>
               <div>
                 <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">
-                  Kurdish Description
+                  Kurdish Sorani Description
                 </label>
                 <textarea
                   value={form.descriptionKu}
@@ -341,6 +373,18 @@ export function ProductForm({ productId }: ProductFormProps) {
                   placeholder="وەسفی بەرهەم بە کوردی..."
                   dir="rtl"
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/15 focus:outline-none focus:border-[#d49f37] transition-colors text-sm resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] uppercase tracking-widest text-[#d49f37] mb-2 font-bold">
+                  Kurdish Kurmanji Description
+                </label>
+                <textarea
+                  value={form.descriptionKm}
+                  onChange={(e) => setForm((prev) => ({ ...prev, descriptionKm: e.target.value }))}
+                  rows={3}
+                  placeholder="Danasîna berhemê bi Kurmancî..."
+                  className="w-full px-4 py-3 bg-white/5 border border-[#d49f37]/40 rounded-lg text-white placeholder:text-white/15 focus:outline-none focus:border-[#d49f37] transition-colors text-sm resize-none"
                 />
               </div>
             </div>
@@ -364,7 +408,7 @@ export function ProductForm({ productId }: ProductFormProps) {
                 />
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                 <div>
                   <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">
                     Long Description (Arabic)
@@ -380,7 +424,7 @@ export function ProductForm({ productId }: ProductFormProps) {
                 </div>
                 <div>
                   <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">
-                    Long Description (Kurdish)
+                    Long Description (Kurdish Sorani)
                   </label>
                   <textarea
                     value={form.longDescriptionKu}
@@ -389,6 +433,18 @@ export function ProductForm({ productId }: ProductFormProps) {
                     placeholder="وەسفی درێژ بە کوردی..."
                     dir="rtl"
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/15 focus:outline-none focus:border-[#d49f37] transition-colors text-sm resize-y"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] uppercase tracking-widest text-[#d49f37] mb-2 font-bold">
+                    Long Description (Kurdish Kurmanji)
+                  </label>
+                  <textarea
+                    value={form.longDescriptionKm}
+                    onChange={(e) => setForm((prev) => ({ ...prev, longDescriptionKm: e.target.value }))}
+                    rows={6}
+                    placeholder="Danasîna dirêj bi Kurmancî..."
+                    className="w-full px-4 py-3 bg-white/5 border border-[#d49f37]/40 rounded-lg text-white placeholder:text-white/15 focus:outline-none focus:border-[#d49f37] transition-colors text-sm resize-y"
                   />
                 </div>
               </div>
@@ -546,6 +602,117 @@ export function ProductForm({ productId }: ProductFormProps) {
             </div>
           </div>
 
+          {/* Colors */}
+          <div className="bg-white/[0.02] border border-white/5 rounded-xl p-6 space-y-5">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs uppercase tracking-widest text-white/30 font-medium">
+                Color Variants
+              </h3>
+              <button
+                type="button"
+                onClick={() => setColors([...colors, { name: "", colorCode: "#000000", image: "" }])}
+                className="text-[#d49f37] hover:text-[#B8965E] flex items-center gap-2 text-sm"
+              >
+                <Plus size={16} /> Add Color
+              </button>
+            </div>
+            
+            {colors.length > 0 && (
+              <div className="space-y-4">
+                {colors.map((color, index) => (
+                  <div key={index} className="flex flex-col sm:flex-row gap-4 items-start p-4 bg-white/5 border border-white/10 rounded-lg relative">
+                    <button
+                      type="button"
+                      onClick={() => setColors(colors.filter((_, i) => i !== index))}
+                      className="absolute top-2 right-2 text-white/40 hover:text-red-500"
+                    >
+                      <X size={16} />
+                    </button>
+                    
+                    <div className="flex-1 space-y-4 w-full">
+                      <div className="flex gap-4">
+                        <div className="flex-1">
+                          <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Color Name *</label>
+                          <input
+                            type="text"
+                            value={color.name}
+                            onChange={(e) => {
+                              const newColors = [...colors];
+                              newColors[index].name = e.target.value;
+                              setColors(newColors);
+                            }}
+                            placeholder="e.g. Matte Black"
+                            required
+                            className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/15 focus:outline-none focus:border-[#d49f37] transition-colors text-sm"
+                          />
+                        </div>
+                        <div className="w-24">
+                          <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Hex Code *</label>
+                          <input
+                            type="color"
+                            value={color.colorCode}
+                            onChange={(e) => {
+                              const newColors = [...colors];
+                              newColors[index].colorCode = e.target.value;
+                              setColors(newColors);
+                            }}
+                            className="w-full h-[38px] p-1 bg-white/5 border border-white/10 rounded-lg cursor-pointer"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-4 items-end">
+                        <div className="flex-1">
+                          <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Image URL *</label>
+                          <input
+                            type="text"
+                            value={color.image}
+                            onChange={(e) => {
+                              const newColors = [...colors];
+                              newColors[index].image = e.target.value;
+                              setColors(newColors);
+                            }}
+                            placeholder="Color image URL"
+                            required
+                            className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/15 focus:outline-none focus:border-[#d49f37] transition-colors text-sm"
+                          />
+                        </div>
+                        <label className="flex-none flex items-center justify-center px-4 h-[38px] bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white cursor-pointer transition-colors text-xs whitespace-nowrap">
+                          <ImagePlus size={14} className="mr-2" /> Upload
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              const formData = new FormData();
+                              formData.append("file", file);
+                              try {
+                                const res = await fetch("/api/upload", { method: "POST", body: formData });
+                                if (res.ok) {
+                                  const data = await res.json();
+                                  const newColors = [...colors];
+                                  newColors[index].image = data.url;
+                                  setColors(newColors);
+                                }
+                              } catch {}
+                            }}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                    {color.image && (
+                      <div className="w-20 h-20 rounded bg-white/5 flex-none mt-4 sm:mt-0">
+                        <img src={color.image} alt="Color preview" className="w-full h-full object-cover rounded" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Category & Brand */}
           <div className="bg-white/[0.02] border border-white/5 rounded-xl p-6 space-y-5">
             <h3 className="text-xs uppercase tracking-widest text-white/30 font-medium">
@@ -581,10 +748,27 @@ export function ProductForm({ productId }: ProductFormProps) {
           {/* Options */}
           <div className="bg-white/[0.02] border border-white/5 rounded-xl p-6 space-y-5">
             <h3 className="text-xs uppercase tracking-widest text-white/30 font-medium">
-              Options
+              Options & Sorting
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-              <label className="flex items-center gap-3 cursor-pointer">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-5 items-end">
+              <label className="flex items-center gap-3 cursor-pointer py-3">
+                <input
+                  type="checkbox"
+                  checked={form.isNew}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      isNew: e.target.checked,
+                    }))
+                  }
+                  className="w-4 h-4 accent-[#d49f37]"
+                />
+                <div>
+                  <span className="text-[#d49f37] font-bold text-sm">New Product</span>
+                  <p className="text-white/30 text-[10px]">Shows "NEW" badge for 7 days</p>
+                </div>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer py-3">
                 <input
                   type="checkbox"
                   checked={form.isBestSeller}
@@ -598,7 +782,7 @@ export function ProductForm({ productId }: ProductFormProps) {
                 />
                 <span className="text-white/60 text-sm">Best Seller</span>
               </label>
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label className="flex items-center gap-3 cursor-pointer py-3">
                 <input
                   type="checkbox"
                   checked={form.inStock}
@@ -612,6 +796,23 @@ export function ProductForm({ productId }: ProductFormProps) {
                 />
                 <span className="text-white/60 text-sm">In Stock</span>
               </label>
+              <div>
+                <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">
+                  Sort Order
+                </label>
+                <input
+                  type="number"
+                  value={form.sortOrder}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      sortOrder: e.target.value,
+                    }))
+                  }
+                  className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#d49f37] transition-colors text-sm"
+                  placeholder="0"
+                />
+              </div>
             </div>
           </div>
 

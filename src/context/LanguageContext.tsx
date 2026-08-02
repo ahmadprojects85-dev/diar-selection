@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-export type Language = "en" | "ar" | "ku";
+export type Language = "ku" | "kmr" | "ar" | "en";
 
 interface LanguageContextType {
   language: Language;
@@ -16,7 +16,8 @@ const translations = {
     home: "Home",
     products: "Products",
     brands: "Brands",
-    brewing_guide: "Brew Guide",
+    brewing_guide: "Brewing",
+    news: "Journal",
     premiumCoffeeEquipment: "Premium Coffee Equipment",
     collections: "Collections",
     about: "About",
@@ -29,7 +30,9 @@ const translations = {
     exploreAll: "Explore Full Collection",
     addToCart: "Add to Cart",
     orderWhatsApp: "Order via WhatsApp",
-    orderWithDetails: "Order with Delivery Info",
+    orderWithDetails: "Direct Order via WhatsApp (Cash on Delivery)",
+    payOnlineCard: "Pay Online (Card)",
+    orderModalDesc: "Please enter your address and phone number to send your order via WhatsApp. Payment is cash upon delivery.",
     quickOrderWhatsApp: "Quick Checkout",
     directOrderNoDetails: "Instant Chat Inquiry",
     fullName: "Full Name",
@@ -43,8 +46,10 @@ const translations = {
     outOfStock: "Out of Stock",
     soldOut: "Sold Out",
     bestSeller: "Best Seller",
+    newArrival: "NEW",
     reviews: "reviews",
     relatedProducts: "Related Products",
+    youMayAlsoLike: "You May Also Like",
     description: "Description",
     allRightsReserved: "All rights reserved.",
     language: "Language",
@@ -110,10 +115,10 @@ const translations = {
     chatWithUs: "Chat with us",
     quickResponse: "Quick response",
     location: "Location",
-    locationDetail: "Erbil, Kurdistan, Iraq",
+    locationDetail: "Slemani, Kurdistan, Iraq",
     visitOurStore: "Visit our store",
     whatsappChat: "WhatsApp Chat",
-    erbilLocation: "Erbil, Kurdistan",
+    slemaniLocation: "Slemani, Kurdistan",
     iraq: "Iraq",
     searchCollection: "Search our collection...",
   },
@@ -121,11 +126,12 @@ const translations = {
     home: "الرئيسية",
     products: "المنتجات",
     brands: "العلامات التجارية",
-    brewing_guide: "دليل التحضير",
+    brewing_guide: "التحضير",
+    news: "المدونة",
     premiumCoffeeEquipment: "أدوات قهوة فاخرة",
     collections: "المجموعات",
     about: "من نحن",
-    contact: "اتصل بنا",
+    contact: "تواصل معنا",
     search: "بحث...",
     searchProducts: "ابحث عن المنتجات...",
     bestSellers: "المجموعة المميزة",
@@ -134,7 +140,9 @@ const translations = {
     exploreAll: "استكشف المجموعة الكاملة",
     addToCart: "أضف إلى السلة",
     orderWhatsApp: "اطلب عبر واتساب",
-    orderWithDetails: "طلب مع معلومات التوصيل",
+    orderWithDetails: "طلب مباشر عبر واتساب (الدفع كاش عند الاستلام)",
+    payOnlineCard: "الدفع عبر الإنترنت (كارت)",
+    orderModalDesc: "يرجى كتابة عنوانك ورقم هاتفك لإرسال الطلب عبر واتساب. يكون الدفع نقداً (كاش) عند استلام الطلب.",
     quickOrderWhatsApp: "شراء سريع عبر واتساب",
     directOrderNoDetails: "استفسار مباشر عبر المحادثة",
     fullName: "الاسم الكامل",
@@ -148,8 +156,10 @@ const translations = {
     outOfStock: "غير متوفر",
     soldOut: "نفذ",
     bestSeller: "الأكثر مبيعاً",
+    newArrival: "جديد",
     reviews: "مراجعات",
     relatedProducts: "منتجات ذات صلة",
+    youMayAlsoLike: "قد يعجبك أيضاً",
     description: "الوصف",
     allRightsReserved: "جميع الحقوق محفوظة.",
     language: "اللغة",
@@ -215,10 +225,10 @@ const translations = {
     chatWithUs: "تحدث معنا",
     quickResponse: "رد سريع",
     location: "الموقع",
-    locationDetail: "أربيل، كوردستان، العراق",
+    locationDetail: "السليمانية، كوردستان، العراق",
     visitOurStore: "زُر متجرنا",
     whatsappChat: "دردشة واتساب",
-    erbilLocation: "أربيل، كوردستان",
+    slemaniLocation: "السليمانية، كوردستان",
     iraq: "العراق",
     searchCollection: "ابحث في مجموعتنا...",
   },
@@ -226,7 +236,8 @@ const translations = {
     home: "سەرەکی",
     products: "بەرهەمەکان",
     brands: "براندەکان",
-    brewing_guide: "ڕێبەری ئامادەکردن",
+    brewing_guide: "ئامادەکردن",
+    news: "زانیاری",
     premiumCoffeeEquipment: "کەرەستەی قاوەی نایاب",
     collections: "کۆکراوەکان",
     about: "دەربارە",
@@ -239,7 +250,9 @@ const translations = {
     exploreAll: "هەموو کۆکراوەکان ببینە",
     addToCart: "زیادکردن بۆ سەبەتە",
     orderWhatsApp: "داواکردن لەڕێگەی واتساپ",
-    orderWithDetails: "داواکردن لەگەڵ زانیاری گەیاندن",
+    orderWithDetails: "داواکردنی ڕاستەوخۆ لە ڕێگەی واتسئاپ (پارە دان لە کاتی گەیاندن)",
+    payOnlineCard: "پارەدانی ئۆنلاین (کارت)",
+    orderModalDesc: "تکایە ناونیشان و ژمارەی مۆبایلی خۆت بنووسە بۆ ناردنی داواکارییەکەت لە ڕێگەی واتساپ. پارەدان بە کاش دەبێت لە کاتی وەرگرتنی داواکارییەکەت.",
     quickOrderWhatsApp: "کڕینی خێرا لەڕێگەی واتساپ",
     directOrderNoDetails: "گفتوگۆی ڕاستەوخۆ",
     fullName: "ناوی تەواو",
@@ -253,8 +266,10 @@ const translations = {
     outOfStock: "بەردەست نییە",
     soldOut: "نەماوە",
     bestSeller: "باشترین فرۆشراو",
+    newArrival: "نوێ",
     reviews: "پێداچوونەوەکان",
     relatedProducts: "بەرهەمە پەیوەندیدارەکان",
+    youMayAlsoLike: "ئەمانەش بەدڵت دەبن",
     description: "وەسف",
     allRightsReserved: "هەموو مافەکان پارێزراون.",
     language: "زمان",
@@ -265,7 +280,7 @@ const translations = {
     heroTitlePart2: "",
     heroTitlePart3: "هەڵدەبژێرین",
     heroTitlePart4: "",
-    heroSubtitle: "ئامرازی هەمیشەیی. دیزاینی بیرکراوە. قاوەی باشتر، هەموو ڕۆژێک.",
+    heroSubtitle: "هەڵبژاردنی کەرەستەی دروستکردنی قاوە و شێوازەکانی ئامادەکردنی قاوە لەسەر بنەمای ئەزموون، زانست، ستانداردە جیهانییەکان.",
     exploreCollection: "کۆکراوەکان ببینە",
     watchOurStory: "چیرۆکەکەمان ببینە",
     typesOfCoffee: "جۆرەکانی ئامادەکردنی قاوە",
@@ -320,43 +335,164 @@ const translations = {
     chatWithUs: "قسەمان لەگەڵ بکە",
     quickResponse: "وەڵامی خێرا",
     location: "شوێن",
-    locationDetail: "هەولێر، کوردستان، عێراق",
+    locationDetail: "سلێمانی، کوردستان، عێراق",
     visitOurStore: "سەردانی فرۆشگاکەمان بکە",
     whatsappChat: "گفتوگۆی واتساپ",
-    erbilLocation: "هەولێر، کوردستان",
+    slemaniLocation: "سلێمانی، کوردستان",
     iraq: "عێراق",
     searchCollection: "لە کۆکراوەکانمان بگەڕێ...",
+  },
+  kmr: {
+    home: "Serekî",
+    products: "Berhem",
+    brands: "Brand",
+    brewing_guide: "Amadekirin",
+    news: "Zanyarî",
+    premiumCoffeeEquipment: "Keresteyên Qahwê yên Taybet",
+    collections: "Koleksiyon",
+    about: "Derbarê Me",
+    contact: "Pêwendî",
+    search: "Lêgerîn...",
+    searchProducts: "Lêgerîna berheman...",
+    bestSellers: "Koleksiyona Taybet",
+    curatedSelection: "Hildibijêrîna Diar",
+    curatedSelectionDesc: "Amraz û keresteyên qahwê yên herî mezin ji brandên navdar ên cîhanê bistînin.",
+    exploreAll: "Hemû Koleksiyonê Bibîne",
+    addToCart: "Zêde bike bo Sebetê",
+    orderWhatsApp: "Sipariş bi rêya WhatsApp",
+    orderWithDetails: "Sipartina Rasterast (Pay bi Cash li Dema Gihandinê)",
+    payOnlineCard: "Pêdana serhêl (Kart)",
+    orderModalDesc: "Ji kerema xwe navnîşan û hejmara telefona xwe binivîse bo şandina sipartinê bi rêya WhatsApp. Paşê teqdîmkirina drav bi cash li dema wergirtina sipartinê ye.",
+    quickOrderWhatsApp: "Kirîna Xêra",
+    directOrderNoDetails: "Peywendiya Rastrast",
+    fullName: "Nav û Paşnav",
+    phoneNumber: "Hejmara Telefonê",
+    city: "Bajar / Herêm",
+    address: "Navnîşana Teqez",
+    cancel: "Betal bike",
+    confirmOrder: "Siparişê bi WhatsApp bişîne",
+    fillAllFields: "Ji kerema xwe hemû cihan tije bikin",
+    inStock: "Li Embarê Heye",
+    outOfStock: "Nîne",
+    soldOut: "Qediya",
+    bestSeller: "Yê Herî Firotî",
+    newArrival: "NÛ",
+    reviews: "nirxandin",
+    relatedProducts: "Berhemên Pêwendîdar",
+    youMayAlsoLike: "Ew tiştên ku dibe ku ji we re xweş bin",
+    description: "Danasîn",
+    allRightsReserved: "Hemû maf parastî ne.",
+    language: "Ziman",
+    english: "English",
+    arabic: "العربية",
+    kurdish: "کوردی (سۆرانی)",
+    kurdishKurmanji: "کوردی (کرمانجی)",
+    heroTitlePart1: "Em Hilbijêrin",
+    heroTitlePart2: "",
+    heroTitlePart3: "Yên Herî Baş",
+    heroTitlePart4: "",
+    heroSubtitle: "Hildibijêrina keresteyên amadekirina qahwê û rêbazên amadekirina qahwê li ser bingeha ezmûn, zanist û standardên cîhanî.",
+    exploreCollection: "Koleksiyonê Bibîne",
+    watchOurStory: "Çîroka Me Bibîne",
+    typesOfCoffee: "Cûreyên Amadekirina Qahwê",
+    exploreMethods: "Rêbazên cuda yên amadekirina qahwê bibînin ji bo qahweya herî baş.",
+    shopTools: "Amrazan Bikire",
+    newsletter: "Nûçename",
+    newsletterDesc: "Tevbê nûçenameyê bibe ji bo agahdariyên nû û pêşniyarên taybet.",
+    subscribe: "Tevbê bibe",
+    quickLinks: "Girêdanên Xêra",
+    contactUs: "Pêwendî bi me re",
+    yourWishlistEmpty: "Lîsteya daxwazên te vala ye",
+    wishlistEmptyDesc: "Te ti berhem lê zêde nekiriye.",
+    exploreProducts: "Berheman Bibîne",
+    myWishlist: "Lîsteya Min a Daxwazê",
+    savedProducts: "Berhemên ku te tomar kirine.",
+    items: "berhem",
+    item: "berhem",
+    noProductsFound: "Ti berhem nehat dîtin",
+    tryAdjusting: "Lêgerîna xwe biguherîne.",
+    filter: "Fîlter:",
+    allCategories: "Hemû Kategorî",
+    allProducts: "Hemû Berhem",
+    allProductsDesc: "Koleksiyona me ya amraz û keresteyên qahwê yên premium bibîne.",
+    footerDesc: "Diar Selection cîhê taybet e bo amraz û keresteyên qahwê yên orjînal ên cîhanê.",
+    connect: "Pêwendî",
+    visitUs: "Serdana me bike",
+    viewProduct: "Berhemê Bikire",
+    aboutSubtitle: "Derbarê Diar Selection",
+    aboutTitle1: "Zevkiya",
+    aboutTitle2: "Mirovên ku",
+    aboutTitle3: "Ji Qahwê re Dijîn.",
+    aboutP1: "Diar Selection bi armanca anîna amrazên qahwê yên herî baş hatiye damezrandin.",
+    aboutP2: "Em bi brandên navdar ên cîhanê re kar dikin ji bo dabînkirina qalîteya bilind.",
+    aboutP3: "Armanca me avakirina civakeke ji hezkiriyên qahwê ye.",
+    aboutVal1Title: "Hildibijêrîna Baş",
+    aboutVal1Desc: "Hemû berhem ji aliyê pisporên qahwê ve hatine hilbijartin.",
+    aboutVal2Title: "Orjînaliya Misoger",
+    aboutVal2Desc: "Em rasterast bi belavkerên fermî re kar dikin.",
+    aboutVal3Title: "Bawerî û Şeffafî",
+    aboutVal3Desc: "Pêşniyarên rast û zelal.",
+    aboutVal4Title: "Hûrgiliyên Baş",
+    aboutVal4Desc: "Ji bo ceribandina qahweya herî baş.",
+    aboutJoin: "Tevbê hezaran hezkiriyên qahwê bibe.",
+    getInTouch: "Pêwendî bi me re",
+    contactTitle1: "Em dixwazin",
+    contactTitle2: "Bihîzin ji te",
+    phone: "Telefon",
+    phoneSub: "Şemî - Yekşemî, 9 sibehê - 8 êvarê",
+    instagram: "Instagram",
+    followUs: "Me bişopîne",
+    whatsapp: "WhatsApp",
+    chatWithUs: "Peywendî bi me re",
+    quickResponse: "Bersiva xêra",
+    location: "Cih",
+    locationDetail: "Silêmanî, Kurdistan, Êraq",
+    visitOurStore: "Serdana dikana me bike",
+    whatsappChat: "Axaftina WhatsApp",
+    slemaniLocation: "Silêmanî, Kurdistan",
+    iraq: "Êraq",
+    searchCollection: "Di koleksiyonê de bigere...",
   },
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("en");
+  const [language, setLanguageState] = useState<Language>("ku");
 
   useEffect(() => {
-    // Load language from localStorage on mount
-    const savedLang = localStorage.getItem("diar_language") as Language;
-    if (savedLang && ["en", "ar", "ku"].includes(savedLang)) {
+    // If previously saved as 'en' in localStorage, reset to Kurdish default
+    const localLang = localStorage.getItem("diar_language");
+    if (localLang === "en") {
+      localStorage.removeItem("diar_language");
+    }
+
+    // Check session language; default to Kurdish ('ku') for new visits/tabs
+    const savedLang = (sessionStorage.getItem("diar_language") || localStorage.getItem("diar_language")) as Language;
+    if (savedLang && ["en", "ar", "ku", "kmr"].includes(savedLang) && savedLang !== "en") {
       setLanguageState(savedLang);
+    } else {
+      setLanguageState("ku");
     }
   }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
+    sessionStorage.setItem("diar_language", lang);
     localStorage.setItem("diar_language", lang);
   };
 
-  const dir = language === "ar" || language === "ku" ? "rtl" : "ltr";
+  const dir = language === "ar" || language === "ku" || language === "kmr" ? "rtl" : "ltr";
 
   const t = (key: keyof typeof translations.en) => {
-    const val = translations[language][key];
-    return val !== undefined ? val : translations.en[key];
+    const val = translations[language]?.[key];
+    if (val !== undefined) return val;
+    return translations.ku[key] !== undefined ? translations.ku[key] : translations.en[key];
   };
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, dir, t }}>
-      <div dir={dir} className={dir === "rtl" ? "font-serif-ar" : ""}>
+      <div dir={dir} data-lang={language} className={dir === "rtl" ? "font-serif-ar" : ""}>
         {children}
       </div>
     </LanguageContext.Provider>

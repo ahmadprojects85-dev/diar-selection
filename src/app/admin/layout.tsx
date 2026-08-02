@@ -13,13 +13,19 @@ import {
   Menu,
   X,
   Coffee,
+  Newspaper,
+  ShoppingBag,
+  Image as ImageIcon,
 } from "lucide-react";
 
 const sidebarLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
+  { href: "/admin/hero-slides", label: "Hero Slides", icon: ImageIcon },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/categories", label: "Categories", icon: Grid3X3 },
   { href: "/admin/brewing-methods", label: "Brewing Methods", icon: Coffee },
+  { href: "/admin/news", label: "News & Articles", icon: Newspaper },
 ];
 
 export default function AdminLayout({

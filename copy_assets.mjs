@@ -99,8 +99,38 @@ if (fs.existsSync(handlerPath)) {
   // Mock getCurrentBinaryTarget to skip Node.js fs.readdir scans on Cloudflare Workers
   content = content.replace(/async getCurrentBinaryTarget\(\)\{/g, 'async getCurrentBinaryTarget(){return "native";');
 
+  // Catch all errors in Prisma's OpenSSL fs.readdir loop so it fails gracefully on Cloudflare Workers instead of crashing
+  content = content.replace(/catch\(([a-zA-Z0-9_$]+)\)\{if\(\1\.code==="ENOENT"\)return;throw \1\}/g, 'catch($1){return;}');
+
+  // Remove eval("__dirname") from Prisma because Cloudflare Workers edge runtime bans eval()
+  content = content.replace(/eval\("__dirname"\)/g, '""');
+
   fs.writeFileSync(handlerPath, content, 'utf8');
   console.log('Fixed absolute paths, mixed slashes, mocked binary target, and removed unused DB engines in handler.mjs');
+}
+
+// 1.8 Patch raw Prisma runtime files left unbundled by OpenNext
+const prismaRuntimeDestDir = path.join(baseDir, 'node_modules/@prisma/client/runtime');
+if (fs.existsSync(prismaRuntimeDestDir)) {
+  const files = fs.readdirSync(prismaRuntimeDestDir);
+  for (const file of files) {
+    if (file.endsWith('.js') || file.endsWith('.mjs')) {
+      const p = path.join(prismaRuntimeDestDir, file);
+      let content = fs.readFileSync(p, 'utf8');
+      
+      // Mock getCurrentBinaryTarget
+      content = content.replace(/async getCurrentBinaryTarget\(\)\{/g, 'async getCurrentBinaryTarget(){return "native";');
+      
+      // Catch fs.readdir errors
+      content = content.replace(/catch\(([a-zA-Z0-9_$]+)\)\{if\(\1\.code==="ENOENT"\)return;throw \1\}/g, 'catch($1){return;}');
+      
+      // Remove eval
+      content = content.replace(/eval\("__dirname"\)/g, '""');
+      
+      fs.writeFileSync(p, content, 'utf8');
+      console.log(`Patched Prisma file: ${file}`);
+    }
+  }
 }
 
 

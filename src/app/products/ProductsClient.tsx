@@ -6,6 +6,7 @@ import { ChevronRight, SlidersHorizontal, Search } from "lucide-react";
 import type { StoreProduct } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
 import { PremiumCategories } from "@/components/PremiumCategories";
+import { GridControls, getGridClass, GridColumns } from "@/components/GridControls";
 import { useLanguage } from "@/context/LanguageContext";
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
 export function ProductsClient({ products, categories }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [columns, setColumns] = useState<GridColumns>(4);
   const { t, language } = useLanguage();
 
   const filtered = useMemo(() => {
@@ -31,16 +33,16 @@ export function ProductsClient({ products, categories }: Props) {
       return true;
     });
 
-    // Sort to bring best sellers to the top
+    // Sort products strictly by sortOrder ascending, then createdAt descending
     return result.sort((a, b) => {
-      if (a.isBestSeller && !b.isBestSeller) return -1;
-      if (!a.isBestSeller && b.isBestSeller) return 1;
-      return 0;
+      const diff = (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
+      if (diff !== 0) return diff;
+      return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
     });
   }, [products, selectedCategory, searchQuery]);
 
   return (
-    <div className="pt-20 lg:pt-24 pb-20">
+    <div className="pt-24 lg:pt-32 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-text-muted mb-8">
@@ -108,14 +110,17 @@ export function ProductsClient({ products, categories }: Props) {
           </div>
         </div>
 
-        {/* Item count text before grid */}
-        <div className="mb-6 flex justify-end text-text-muted text-xs">
-          <span>{filtered.length} {filtered.length !== 1 ? t("items") : t("item")}</span>
+        {/* Grid Controls & Item Count Bar */}
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <span className="text-text-muted text-xs font-medium">
+            {filtered.length} {filtered.length !== 1 ? t("items") : t("item")}
+          </span>
+          <GridControls columns={columns} onChange={setColumns} />
         </div>
 
         {/* Product Grid */}
         {filtered.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-5">
+          <div className={`grid ${getGridClass(columns)} gap-4 lg:gap-5 transition-all duration-300`}>
             {filtered.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

@@ -26,23 +26,61 @@ export function Navbar() {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const pathname = usePathname();
   const { language, setLanguage, t } = useLanguage();
+  const isRTL = language === "ar" || language === "ku" || language === "kmr";
   const { wishlistCount } = useWishlist();
   const { theme, toggleTheme } = useTheme();
   const { cartCount, openCart } = useCart();
+
+  if (pathname?.startsWith("/admin")) return null;
 
   const navLinks = [
     { href: "/", label: t("home") },
     { href: "/products", label: t("products") },
     { href: "/#brewing-guide", label: t("brewing_guide") },
-    { href: "/#about", label: t("about") },
+    { href: "/news", label: t("news") },
     { href: "/#contact", label: t("contact") },
   ];
+
+  const [activeSection, setActiveSection] = useState<string>("");
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (pathname !== "/") {
+      setActiveSection("");
+      return;
+    }
+
+    const handleScrollSection = () => {
+      const collectionsElem = document.getElementById("collections");
+      const brewingElem = document.getElementById("brewing-guide");
+      const newsElem = document.getElementById("news-section");
+      const contactElem = document.getElementById("contact");
+      
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 150;
+      const scrollPos = window.scrollY + window.innerHeight * 0.4;
+
+      if (isAtBottom || (contactElem && scrollPos >= contactElem.offsetTop)) {
+        setActiveSection("contact");
+      } else if (newsElem && scrollPos >= newsElem.offsetTop) {
+        setActiveSection("news");
+      } else if (brewingElem && scrollPos >= brewingElem.offsetTop) {
+        setActiveSection("brewing-guide");
+      } else if (collectionsElem && scrollPos >= collectionsElem.offsetTop) {
+        setActiveSection("products");
+      } else {
+        setActiveSection("home");
+      }
+    };
+
+    window.addEventListener("scroll", handleScrollSection, { passive: true });
+    handleScrollSection();
+    return () => window.removeEventListener("scroll", handleScrollSection);
+  }, [pathname]);
 
   useEffect(() => {
     if (mobileOpen) {
@@ -52,45 +90,71 @@ export function Navbar() {
     }
   }, [mobileOpen]);
 
+  // Map each nav link href to the detected active section on the homepage
+  const checkIsActive = (linkHref: string) => {
+    // When NOT on the homepage, match by pathname
+    if (pathname !== "/") {
+      if (linkHref === "/") return false;
+      if (linkHref.startsWith("/#")) return false;
+      return pathname === linkHref || pathname.startsWith(linkHref + "/");
+    }
+    // On the homepage, match by scroll-detected section
+    const sectionMap: Record<string, string> = {
+      "/": "home",
+      "/products": "products",
+      "/#brewing-guide": "brewing-guide",
+      "/news": "news",
+      "/#contact": "contact",
+    };
+    return activeSection === (sectionMap[linkHref] || "");
+  };
+
   const isDark = theme === "dark";
 
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? isDark
-              ? "bg-[#0a0a0a]/95 backdrop-blur-md border-b border-white/10"
-              : "bg-[#18130F]/95 backdrop-blur-md border-b border-[#B8AD9A]/20"
-            : isDark
-            ? "bg-[#0a0a0a]"
-            : "bg-[#18130F]"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-black ${
+          scrolled ? "border-b border-white/10 shadow-lg" : ""
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
+          <div className="flex items-center justify-between h-24 lg:h-32">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <Logo className={`w-auto h-12 sm:h-14 transition-transform group-hover:scale-105 ${isDark ? "brightness-0 invert" : "brightness-0 invert"}`} />
+            <Link href="/" className="flex items-center gap-3 group py-1">
+              <Logo isNav={true} className="w-auto h-[72px] sm:h-[88px] lg:h-[108px] transition-transform group-hover:scale-105" />
             </Link>
 
             {/* Desktop Nav */}
             <div className="hidden lg:flex items-center gap-10">
               {navLinks.map((link) => {
                 const isHashLink = link.href.startsWith("/#");
-                const isActive = pathname === link.href || (pathname === "/" && link.href === "/"); // Note: hash links are harder to track via pathname
-                const baseClass = "relative py-2 text-sm tracking-widest uppercase transition-colors duration-300 group-hover:text-gold";
+                const isActive = checkIsActive(link.href);
+                const baseClass = `relative py-2 text-sm ${isRTL ? "tracking-normal font-medium" : "tracking-widest uppercase"} transition-colors duration-300 group-hover:text-gold`;
                 const activeClass = isActive 
-                  ? "text-gold" 
+                  ? "text-gold font-bold" 
                   : isDark ? "text-white/85 hover:text-white" : "text-[#EBE5DB]/85 hover:text-white";
                 
-                // Animated underline effect
                 const underlineClass = "after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-gold after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300 after:origin-left";
-                
                 const combinedClass = `${baseClass} ${activeClass} ${underlineClass} ${isActive ? "after:scale-x-100" : ""}`;
                 
                 return isHashLink ? (
-                  <a key={link.href} href={link.href} className={combinedClass}>
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={(e) => {
+                      const targetId = link.href.replace("/#", "");
+                      if (pathname === "/") {
+                        const elem = document.getElementById(targetId);
+                        if (elem) {
+                          e.preventDefault();
+                          elem.scrollIntoView({ behavior: "smooth" });
+                          setActiveSection(targetId);
+                        }
+                      }
+                    }}
+                    className={combinedClass}
+                  >
                     {link.label}
                   </a>
                 ) : (
@@ -111,30 +175,36 @@ export function Navbar() {
                   aria-label="Change Language"
                 >
                   <Globe size={20} />
-                  <span className="text-[10px] uppercase tracking-widest hidden sm:inline-block">
+                  <span className="text-[11px] uppercase font-semibold tracking-normal">
                     {language.toUpperCase()}
                   </span>
                 </button>
                 
                 {isLangMenuOpen && (
-                  <div className="absolute top-full right-0 mt-2 w-32 bg-bg-secondary border border-gold/10 rounded-lg shadow-xl overflow-hidden py-1 z-50">
+                  <div className="absolute top-full right-0 mt-2 w-40 bg-bg-secondary border border-gold/10 rounded-lg shadow-xl overflow-hidden py-1 z-50">
+                    <button
+                      onClick={() => { setLanguage("ku"); setIsLangMenuOpen(false); }}
+                      className={`block w-full text-right px-4 py-2 text-sm hover:bg-gold/5 ${language === "ku" ? "text-gold font-bold" : "text-text-primary"}`}
+                    >
+                      کوردی (سۆرانی)
+                    </button>
+                    <button
+                      onClick={() => { setLanguage("kmr"); setIsLangMenuOpen(false); }}
+                      className={`block w-full text-right px-4 py-2 text-sm hover:bg-gold/5 ${language === "kmr" ? "text-gold font-bold" : "text-text-primary"}`}
+                    >
+                      کوردی (کرمانجی)
+                    </button>
                     <button
                       onClick={() => { setLanguage("en"); setIsLangMenuOpen(false); }}
-                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-gold/5 ${language === "en" ? "text-gold" : "text-text-primary"}`}
+                      className={`block w-full text-left px-4 py-2 text-sm font-bold hover:bg-gold/5 ${language === "en" ? "text-gold" : "text-text-primary"}`}
                     >
                       English
                     </button>
                     <button
                       onClick={() => { setLanguage("ar"); setIsLangMenuOpen(false); }}
-                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-gold/5 ${language === "ar" ? "text-gold" : "text-text-primary"}`}
+                      className={`block w-full text-right px-4 py-2 text-sm hover:bg-gold/5 ${language === "ar" ? "text-gold font-bold" : "text-text-primary"}`}
                     >
                       العربية
-                    </button>
-                    <button
-                      onClick={() => { setLanguage("ku"); setIsLangMenuOpen(false); }}
-                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-gold/5 ${language === "ku" ? "text-gold" : "text-text-primary"}`}
-                    >
-                      کوردی
                     </button>
                   </div>
                 )}
@@ -190,22 +260,33 @@ export function Navbar() {
 
         {/* Mobile Menu */}
         <div
-          className={`lg:hidden fixed inset-0 top-16 backdrop-blur-lg transition-all duration-300 ${
+          className={`lg:hidden fixed inset-0 top-20 transition-all duration-300 bg-black ${
             mobileOpen
               ? "opacity-100 pointer-events-auto"
               : "opacity-0 pointer-events-none"
-          } ${isDark ? "bg-[#0a0a0a]/98" : "bg-[#18130F]/98"}`}
+          }`}
         >
           <div className="flex flex-col items-center justify-center gap-8 pt-20">
             {navLinks.map((link) => {
               const isHashLink = link.href.startsWith("/#");
-              const className = `transition-colors text-xl tracking-wide font-light ${isDark ? "text-white/90 hover:text-gold" : "text-[#EBE5DB]/90 hover:text-gold"}`;
+              const isActive = checkIsActive(link.href);
+              const className = `transition-colors text-xl ${isRTL ? "tracking-normal font-medium" : "tracking-wide font-light"} ${isActive ? "text-gold font-bold" : isDark ? "text-white/90 hover:text-gold" : "text-[#EBE5DB]/90 hover:text-gold"}`;
               
               return isHashLink ? (
                 <a
                   key={link.href}
                   href={link.href}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={(e) => {
+                    setMobileOpen(false);
+                    const targetId = link.href.replace("/#", "");
+                    if (pathname === "/") {
+                      const elem = document.getElementById(targetId);
+                      if (elem) {
+                        e.preventDefault();
+                        elem.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }
+                  }}
                   className={className}
                 >
                   {link.label}
@@ -233,7 +314,7 @@ export function Navbar() {
                 className={`flex items-center gap-2 text-lg ${isDark ? "text-white/80" : "text-[#EBE5DB]/80"}`}
               >
                 <Search size={24} />
-                <span>Search</span>
+                <span>{t("search")}</span>
               </button>
             </div>
           </div>

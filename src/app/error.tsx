@@ -30,6 +30,11 @@ export default function GlobalError({
           <p className="text-text-secondary text-sm">
             Our secure database was resting. It takes a few seconds to wake up for the first visitor. Please refresh the page to continue.
           </p>
+          {error?.message && (
+            <p className="text-xs font-mono text-red-400/80 bg-black/30 p-2 rounded break-all text-start">
+              {error.message}
+            </p>
+          )}
         </div>
 
         <button

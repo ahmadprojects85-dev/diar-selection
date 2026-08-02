@@ -1,8 +1,10 @@
 import { prisma, withRetry } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 
 // GET /api/products — List all products (public)
+// ... (omitting GET for brevity, replacing exact import region)
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -28,15 +30,15 @@ export async function GET(request: NextRequest) {
 
     const products = await withRetry(() => prisma.product.findMany({
       where,
-      include: { category: true, brand: true },
+      include: { category: true, brand: true, colors: true },
       orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
       ...(limit ? { take: parseInt(limit) } : {}),
     }));
 
     return Response.json(products);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to fetch products:", error);
-    return Response.json({ error: "Failed to fetch products" }, { status: 500 });
+    return Response.json({ error: "Failed to fetch products", details: error?.message || String(error) }, { status: 500 });
   }
 }
 
@@ -67,8 +69,10 @@ export async function POST(request: NextRequest) {
       brandId,
       isBestSeller,
       isFeatured,
+      isNew,
       inStock,
       sortOrder,
+      colors,
     } = body;
 
     if (!name || !slug || !price || !image || !categoryId) {
@@ -99,11 +103,22 @@ export async function POST(request: NextRequest) {
         brandId: brandId || null,
         isBestSeller: isBestSeller || false,
         isFeatured: isFeatured || false,
+        isNew: isNew || false,
         inStock: inStock !== false,
         sortOrder: sortOrder || 0,
+        colors: colors && colors.length > 0 ? {
+          create: colors.map((c: any) => ({
+            name: c.name,
+            colorCode: c.colorCode,
+            image: c.image
+          }))
+        } : undefined,
       },
-      include: { category: true, brand: true },
+      include: { category: true, brand: true, colors: true },
     });
+
+    revalidatePath("/");
+    revalidatePath("/products");
 
     return Response.json(product, { status: 201 });
   } catch (error: any) {

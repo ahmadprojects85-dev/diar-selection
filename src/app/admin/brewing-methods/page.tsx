@@ -28,12 +28,15 @@ export default function AdminBrewingMethodsPage() {
     name: "",
     nameAr: "",
     nameKu: "",
+    nameKm: "",
     tagline: "",
     taglineAr: "",
     taglineKu: "",
+    taglineKm: "",
     description: "",
     descriptionAr: "",
     descriptionKu: "",
+    descriptionKm: "",
     image: "",
     time: "",
     sortOrder: "0",
@@ -96,12 +99,15 @@ export default function AdminBrewingMethodsPage() {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          sortOrder: parseInt(form.sortOrder || "0"),
+        }),
       });
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Failed to save brewing method");
+        throw new Error(data.error || "Failed to save method");
       }
 
       resetForm();
@@ -132,12 +138,15 @@ export default function AdminBrewingMethodsPage() {
       name: method.name || "",
       nameAr: method.nameAr || "",
       nameKu: method.nameKu || "",
+      nameKm: method.nameKm || "",
       tagline: method.tagline || "",
       taglineAr: method.taglineAr || "",
       taglineKu: method.taglineKu || "",
+      taglineKm: method.taglineKm || "",
       description: method.description || "",
       descriptionAr: method.descriptionAr || "",
       descriptionKu: method.descriptionKu || "",
+      descriptionKm: method.descriptionKm || "",
       image: method.image || "",
       time: method.time || "",
       sortOrder: String(method.sortOrder || "0"),
@@ -150,12 +159,15 @@ export default function AdminBrewingMethodsPage() {
       name: "",
       nameAr: "",
       nameKu: "",
+      nameKm: "",
       tagline: "",
       taglineAr: "",
       taglineKu: "",
+      taglineKm: "",
       description: "",
       descriptionAr: "",
       descriptionKu: "",
+      descriptionKm: "",
       image: "",
       time: "",
       sortOrder: "0",
@@ -232,14 +244,18 @@ export default function AdminBrewingMethodsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Name (Arabic)</label>
                   <input type="text" dir="rtl" value={form.nameAr} onChange={(e) => setForm({ ...form, nameAr: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:border-[#d49f37] outline-none" />
                 </div>
                 <div>
-                  <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Name (Kurdish)</label>
+                  <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Name (Kurdish Sorani)</label>
                   <input type="text" dir="rtl" value={form.nameKu} onChange={(e) => setForm({ ...form, nameKu: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:border-[#d49f37] outline-none" />
+                </div>
+                <div>
+                  <label className="block text-[11px] uppercase tracking-widest text-[#d49f37] mb-2 font-bold">Name (Kurdish Kurmanji)</label>
+                  <input type="text" value={form.nameKm} onChange={(e) => setForm({ ...form, nameKm: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-[#d49f37]/40 rounded-lg text-white text-sm focus:border-[#d49f37] outline-none" />
                 </div>
               </div>
 
@@ -248,14 +264,33 @@ export default function AdminBrewingMethodsPage() {
                 <input type="text" value={form.tagline} onChange={(e) => setForm({ ...form, tagline: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:border-[#d49f37] outline-none" />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Tagline (Arabic)</label>
                   <input type="text" dir="rtl" value={form.taglineAr} onChange={(e) => setForm({ ...form, taglineAr: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:border-[#d49f37] outline-none" />
                 </div>
                 <div>
-                  <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Tagline (Kurdish)</label>
+                  <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Tagline (Kurdish Sorani)</label>
                   <input type="text" dir="rtl" value={form.taglineKu} onChange={(e) => setForm({ ...form, taglineKu: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:border-[#d49f37] outline-none" />
+                </div>
+                <div>
+                  <label className="block text-[11px] uppercase tracking-widest text-[#d49f37] mb-2 font-bold">Tagline (Kurdish Kurmanji)</label>
+                  <input type="text" value={form.taglineKm} onChange={(e) => setForm({ ...form, taglineKm: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-[#d49f37]/40 rounded-lg text-white text-sm focus:border-[#d49f37] outline-none" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Description (Arabic)</label>
+                  <textarea rows={3} dir="rtl" value={form.descriptionAr} onChange={(e) => setForm({ ...form, descriptionAr: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:border-[#d49f37] outline-none" />
+                </div>
+                <div>
+                  <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Description (Kurdish Sorani)</label>
+                  <textarea rows={3} dir="rtl" value={form.descriptionKu} onChange={(e) => setForm({ ...form, descriptionKu: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:border-[#d49f37] outline-none" />
+                </div>
+                <div>
+                  <label className="block text-[11px] uppercase tracking-widest text-[#d49f37] mb-2 font-bold">Description (Kurdish Kurmanji)</label>
+                  <textarea rows={3} value={form.descriptionKm} onChange={(e) => setForm({ ...form, descriptionKm: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-[#d49f37]/40 rounded-lg text-white text-sm focus:border-[#d49f37] outline-none" />
                 </div>
               </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Package, Grid3X3, Tag, TrendingUp, Coffee } from "lucide-react";
+import { Package, Grid3X3, Tag, TrendingUp, Coffee, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 
 interface Stats {
@@ -10,6 +10,7 @@ interface Stats {
   bestSellers: number;
   brands: number;
   brewingMethods: number;
+  orders: number;
 }
 
 export default function AdminDashboard() {
@@ -19,6 +20,7 @@ export default function AdminDashboard() {
     bestSellers: 0,
     brands: 0,
     brewingMethods: 0,
+    orders: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -28,8 +30,9 @@ export default function AdminDashboard() {
       fetch("/api/categories").then((r) => r.json()),
       fetch("/api/brewing-methods").then((r) => r.json()),
       fetch("/api/brands").then((r) => r.json()),
+      fetch("/api/admin/orders").then((r) => r.json()).catch(() => []), // fetch orders (requires auth)
     ])
-      .then(([products, categories, brewingMethods, brands]) => {
+      .then(([products, categories, brewingMethods, brands, orders]) => {
         setStats({
           products: Array.isArray(products) ? products.length : 0,
           categories: Array.isArray(categories) ? categories.length : 0,
@@ -38,6 +41,7 @@ export default function AdminDashboard() {
             : 0,
           brewingMethods: Array.isArray(brewingMethods) ? brewingMethods.length : 0,
           brands: Array.isArray(brands) ? brands.length : 0,
+          orders: Array.isArray(orders) ? orders.length : 0,
         });
       })
       .catch(console.error)
@@ -45,6 +49,13 @@ export default function AdminDashboard() {
   }, []);
 
   const statCards = [
+    {
+      label: "Orders",
+      value: stats.orders,
+      icon: ShoppingBag,
+      href: "/admin/orders",
+      colorClass: "text-red-500 bg-red-500/10",
+    },
     {
       label: "Products",
       value: stats.products,
@@ -118,18 +129,18 @@ export default function AdminDashboard() {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
+          href="/admin/orders"
+          className="bg-red-500/10 border border-red-500/20 rounded-xl p-5 hover:border-red-500/40 transition-colors text-center"
+        >
+          <ShoppingBag size={24} className="mx-auto mb-3 text-red-500" />
+          <p className="text-sm font-semibold text-red-500">Manage Orders</p>
+        </Link>
+        <Link
           href="/admin/products/new"
           className="bg-gold/10 border border-gold/20 rounded-xl p-5 hover:border-gold/40 transition-colors text-center"
         >
           <Package size={24} className="mx-auto mb-3 text-gold" />
           <p className="text-sm font-semibold text-gold">Add Product</p>
-        </Link>
-        <Link
-          href="/admin/categories"
-          className="bg-white/[0.03] border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors text-center"
-        >
-          <Grid3X3 size={24} className="mx-auto mb-3 text-white/40" />
-          <p className="text-sm text-white/60">Manage Categories</p>
         </Link>
       </div>
     </div>

@@ -20,6 +20,7 @@ export async function PUT(
         ...(body.name !== undefined && { name: body.name }),
         ...(body.nameAr !== undefined && { nameAr: body.nameAr }),
         ...(body.nameKu !== undefined && { nameKu: body.nameKu }),
+        ...(body.nameKm !== undefined && { nameKm: body.nameKm }),
         ...(body.slug !== undefined && { slug: body.slug }),
         ...(body.image !== undefined && { image: body.image }),
       },

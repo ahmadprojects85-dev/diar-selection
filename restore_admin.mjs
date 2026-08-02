@@ -11,12 +11,29 @@ const dirsToRestore = [
   { path: 'src/app/api/upload', hidden: 'src/app/api/_upload' }
 ];
 
+const renameWithRetry = (src, dest, retries = 10, delay = 300) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      fs.renameSync(src, dest);
+      return;
+    } catch (err) {
+      if ((err.code === 'EPERM' || err.code === 'EBUSY') && i < retries - 1) {
+        // Synchronous sleep block
+        const start = Date.now();
+        while (Date.now() - start < delay) {}
+        continue;
+      }
+      throw err;
+    }
+  }
+};
+
 for (const dir of dirsToRestore) {
   const fullPath = path.join(__dirname, dir.path);
   const hiddenPath = path.join(__dirname, dir.hidden);
   
   if (fs.existsSync(hiddenPath)) {
-    fs.renameSync(hiddenPath, fullPath);
+    renameWithRetry(hiddenPath, fullPath);
     console.log(`Restored: ${dir.hidden} -> ${dir.path}`);
   }
 }

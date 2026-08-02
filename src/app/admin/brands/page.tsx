@@ -17,6 +17,7 @@ export default function AdminBrandsPage() {
   const [name, setName] = useState("");
   const [nameAr, setNameAr] = useState("");
   const [nameKu, setNameKu] = useState("");
+  const [nameKm, setNameKm] = useState("");
   const [slug, setSlug] = useState("");
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -53,7 +54,7 @@ export default function AdminBrandsPage() {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, nameAr, nameKu, slug }),
+        body: JSON.stringify({ name, nameAr, nameKu, nameKm, slug }),
       });
 
       if (!res.ok) {
@@ -88,6 +89,7 @@ export default function AdminBrandsPage() {
     setName(brand.name);
     setNameAr(brand.nameAr || "");
     setNameKu(brand.nameKu || "");
+    setNameKm(brand.nameKm || "");
     setSlug(brand.slug);
   };
 
@@ -96,6 +98,7 @@ export default function AdminBrandsPage() {
     setName("");
     setNameAr("");
     setNameKu("");
+    setNameKm("");
     setSlug("");
     setError("");
   };
@@ -193,7 +196,7 @@ export default function AdminBrandsPage() {
                 />
               </div>
               <div>
-                <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Kurdish Name</label>
+                <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Kurdish Sorani Name (سۆرانی)</label>
                 <input
                   type="text"
                   value={nameKu}
@@ -201,6 +204,16 @@ export default function AdminBrandsPage() {
                   placeholder="تایمۆر"
                   dir="rtl"
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-[#d49f37]"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] uppercase tracking-widest text-[#d49f37] mb-2 font-bold">Kurdish Kurmanji Name (کرمانجی)</label>
+                <input
+                  type="text"
+                  value={nameKm}
+                  onChange={(e) => setNameKm(e.target.value)}
+                  placeholder="Timemore"
+                  className="w-full px-4 py-3 bg-white/5 border border-[#d49f37]/40 rounded-lg text-white text-sm focus:outline-none focus:border-[#d49f37]"
                 />
               </div>
               {error && <p className="text-red-400 text-xs">{error}</p>}

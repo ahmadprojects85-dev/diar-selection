@@ -3,12 +3,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  const products = await prisma.product.findMany({
-    include: { category: true }
-  });
-  
-  for (const p of products) {
-    console.log(`- ${p.name}: [${p.category.name}]`);
+  const categories = await prisma.category.findMany();
+  for (const c of categories) {
+    console.log(`Category: ${c.name} | Slug: ${c.slug} | Image: ${c.image}`);
   }
 }
 

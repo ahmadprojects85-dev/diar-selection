@@ -9,7 +9,7 @@ interface LogoProps {
 }
 
 export function Logo({ className = "", width = 200, height = 200, useFullLogo = true, isNav = false }: LogoProps) {
-  const imageSrc = isNav ? "/logo-white.png?v=2" : "/brand-logo.png?v=3";
+  const imageSrc = isNav ? "/nav-logo.png?v=10" : "/brand-logo.png?v=10";
 
   return (
     <img 

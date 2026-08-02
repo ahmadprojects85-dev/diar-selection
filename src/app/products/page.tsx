@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Explore our complete collection of premium coffee tools and equipment.",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function ProductsPage() {
   const [products, categories] = await Promise.all([

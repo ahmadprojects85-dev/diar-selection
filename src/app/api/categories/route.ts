@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
   if (authError) return authError;
 
   try {
-    const { name, nameAr, nameKu, slug, description, descriptionAr, descriptionKu, image, sortOrder } = await request.json();
+    const { name, nameAr, nameKu, nameKm, slug, description, descriptionAr, descriptionKu, descriptionKm, image, sortOrder } = await request.json();
 
     if (!name || !slug) {
       return Response.json({ error: "Name and slug are required" }, { status: 400 });
@@ -33,10 +33,12 @@ export async function POST(request: NextRequest) {
         name,
         nameAr: nameAr || null,
         nameKu: nameKu || null,
+        nameKm: nameKm || null,
         slug,
         description: description || null,
         descriptionAr: descriptionAr || null,
         descriptionKu: descriptionKu || null,
+        descriptionKm: descriptionKm || null,
         image: image || null,
         sortOrder: sortOrder || 0,
       },

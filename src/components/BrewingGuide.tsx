@@ -122,12 +122,13 @@ export function BrewingGuide() {
 
   const getTranslatedText = (method: BrewingMethod, field: "name" | "tagline" | "description") => {
     if (language === "ar") return method[`${field}Ar`] || method[field];
+    if (language === "kmr") return (method as any)[`${field}Km`] || method[`${field}Ku`] || method[field];
     if (language === "ku") return method[`${field}Ku`] || method[field];
     return method[field];
   };
 
   return (
-    <section className="py-14 lg:py-28 bg-bg-primary" id="brewing-guide">
+    <section className="py-10 lg:py-28 bg-bg-primary" id="brewing-guide">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-10 lg:mb-20">

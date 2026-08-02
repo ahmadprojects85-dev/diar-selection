@@ -48,6 +48,11 @@ export function ProductCard({ product }: ProductCardProps) {
     ? (mainImg.startsWith('http') || mainImg.startsWith('/') ? mainImg : `/${mainImg}`) 
     : '';
 
+  const isNewActive = Boolean(
+    (product as any).isNew &&
+    (!product.createdAt || (Date.now() - new Date(product.createdAt).getTime() <= 7 * 24 * 60 * 60 * 1000))
+  );
+
   return (
     <div className="group rounded-2xl sm:rounded-[24px] overflow-hidden border border-border/50 hover:border-gold/30 transition-all duration-500 flex flex-col h-full bg-bg-card"
          style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.03)" }}>
@@ -59,7 +64,7 @@ export function ProductCard({ product }: ProductCardProps) {
         />
         <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500" />
 
-        {/* Wishlist Button */}
+        {/* Wishlist Button — Top Right */}
         <button
           onClick={toggleWishlist}
           className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 p-2 sm:p-2.5 rounded-full bg-bg-card/80 backdrop-blur-md border border-border text-text-primary hover:bg-gold hover:border-gold hover:text-bg-primary transition-all duration-300 transform group-hover:scale-110"
@@ -72,16 +77,22 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Info */}
       <div className="p-3 sm:p-6 flex flex-col flex-1 justify-between gap-2 sm:gap-4">
         <div>
-          {/* Badges */}
-          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2 sm:mb-3">
-            {!product.inStock && (
-              <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-text-primary text-bg-primary text-[8px] sm:text-[9px] font-bold uppercase tracking-widest rounded-md">
-                {t("soldOut")}
+          {/* Badges — Clean & Non-obscuring */}
+          <div className="flex flex-wrap items-center gap-1.5 mb-2">
+            {isNewActive && product.inStock && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#10b981] text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider rounded-md shadow-sm shadow-[#10b981]/40">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                {t("newArrival")}
               </span>
             )}
             {product.isBestSeller && product.inStock && (
-              <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-gold text-bg-primary text-[8px] sm:text-[9px] font-bold uppercase tracking-widest rounded-md">
-                {t("bestSeller")}
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#d49f37] text-bg-primary text-[10px] sm:text-[11px] font-black uppercase tracking-wider rounded-md shadow-sm shadow-[#d49f37]/40">
+                ★ {t("bestSeller")}
+              </span>
+            )}
+            {!product.inStock && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-500/10 border border-red-500/30 text-red-500 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider rounded-md">
+                {t("soldOut")}
               </span>
             )}
           </div>
@@ -89,7 +100,13 @@ export function ProductCard({ product }: ProductCardProps) {
           {/* Name */}
           <Link href={`/products/${product.slug}`}>
             <h3 className="text-text-primary text-[13px] sm:text-[17px] font-medium leading-snug group-hover:text-gold transition-colors line-clamp-2 mb-0.5 sm:mb-1">
-              {product.name}
+              {language === "ar"
+                ? (product.nameAr || product.name)
+                : language === "kmr"
+                ? ((product as any).nameKm || product.nameKu || product.name)
+                : language === "ku"
+                ? (product.nameKu || product.name)
+                : product.name}
             </h3>
           </Link>
 
@@ -120,9 +137,16 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Price + Action */}
         <div className="pt-2 sm:pt-4 flex flex-col gap-2.5 sm:gap-3 mt-auto">
-          <span className="font-bold text-[17px] sm:text-[22px] text-text-primary break-words tracking-tight">
-            {formatPrice(product.price, language)}
-          </span>
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <span className="font-bold text-[17px] sm:text-[22px] text-text-primary break-words tracking-tight">
+              {formatPrice(product.price, language)}
+            </span>
+            {product.originalPrice != null && product.originalPrice > 0 && (
+              <span className="text-[12px] sm:text-[14px] text-text-muted line-through font-medium">
+                {formatPrice(product.originalPrice, language)}
+              </span>
+            )}
+          </div>
           
           <div className="flex items-center gap-2">
             <Link

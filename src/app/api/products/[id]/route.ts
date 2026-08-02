@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 
 // GET /api/products/[id] — Single product (public)
 export async function GET(
@@ -11,7 +12,7 @@ export async function GET(
     const { id } = await params;
     const product = await prisma.product.findUnique({
       where: { id },
-      include: { category: true, brand: true },
+      include: { category: true, brand: true, colors: true },
     });
 
     if (!product) {
@@ -63,11 +64,26 @@ export async function PUT(
         ...(body.brandId !== undefined && { brandId: body.brandId }),
         ...(body.isBestSeller !== undefined && { isBestSeller: body.isBestSeller }),
         ...(body.isFeatured !== undefined && { isFeatured: body.isFeatured }),
+        ...(body.isNew !== undefined && { isNew: body.isNew }),
         ...(body.inStock !== undefined && { inStock: body.inStock }),
-        ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
+        ...(body.sortOrder !== undefined && { sortOrder: parseInt(String(body.sortOrder)) || 0 }),
+        ...(body.colors !== undefined && {
+          colors: {
+            deleteMany: {},
+            create: body.colors.map((c: any) => ({
+              name: c.name,
+              colorCode: c.colorCode,
+              image: c.image
+            }))
+          }
+        }),
       },
-      include: { category: true, brand: true },
+      include: { category: true, brand: true, colors: true },
     });
+
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath(`/products/${product.slug}`);
 
     return Response.json(product);
   } catch (error: any) {
@@ -89,7 +105,14 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-    await prisma.product.delete({ where: { id } });
+    const deletedProduct = await prisma.product.delete({ where: { id } });
+
+    revalidatePath("/");
+    revalidatePath("/products");
+    if (deletedProduct) {
+      revalidatePath(`/products/${deletedProduct.slug}`);
+    }
+
     return Response.json({ success: true });
   } catch (error: any) {
     if (error?.code === "P2025") {

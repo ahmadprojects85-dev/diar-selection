@@ -21,12 +21,29 @@ for (const cacheDir of cacheDirs) {
   }
 }
 
+const renameWithRetry = (src, dest, retries = 10, delay = 300) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      fs.renameSync(src, dest);
+      return;
+    } catch (err) {
+      if ((err.code === 'EPERM' || err.code === 'EBUSY') && i < retries - 1) {
+        // Synchronous sleep block
+        const start = Date.now();
+        while (Date.now() - start < delay) {}
+        continue;
+      }
+      throw err;
+    }
+  }
+};
+
 for (const dir of dirsToHide) {
   const fullPath = path.join(__dirname, dir.path);
   const hiddenPath = path.join(__dirname, dir.hidden);
   
   if (fs.existsSync(fullPath)) {
-    fs.renameSync(fullPath, hiddenPath);
+    renameWithRetry(fullPath, hiddenPath);
     console.log(`Hidden: ${dir.path} -> ${dir.hidden}`);
   }
 }
