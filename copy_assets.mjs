@@ -155,6 +155,16 @@ for (const dir of dirsToCopy) {
   }
 }
 
+// Deduplicate exports in cloudflare/next-env.mjs if present to avoid esbuild duplicate symbol errors
+const nextEnvPath = path.join(assetsDir, 'cloudflare/next-env.mjs');
+if (fs.existsSync(nextEnvPath)) {
+  let envContent = fs.readFileSync(nextEnvPath, 'utf8');
+  const lines = envContent.split('\n');
+  const uniqueLines = Array.from(new Set(lines));
+  fs.writeFileSync(nextEnvPath, uniqueLines.join('\n'), 'utf8');
+  console.log('Deduplicated exports in cloudflare/next-env.mjs');
+}
+
 // 3. Generate _routes.json to control routing for static assets
 const routesJsonPath = path.join(assetsDir, '_routes.json');
 const routesConfig = {
