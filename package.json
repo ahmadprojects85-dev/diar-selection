@@ -6,8 +6,6 @@
     "dev": "next dev",
     "build": "npx prisma generate && next build --webpack && npx @opennextjs/cloudflare build --skipNextBuild && node copy_assets.mjs && npx esbuild .open-next/server-functions/default/handler.mjs --minify --allow-overwrite --outfile=.open-next/server-functions/default/handler.mjs",
     "build:worker": "npx prisma generate && npx @opennextjs/cloudflare build && node copy_assets.mjs && npx esbuild .open-next/server-functions/default/handler.mjs --minify --allow-overwrite --outfile=.open-next/server-functions/default/handler.mjs",
-    "prebuild:worker": "node hide_admin.mjs",
-    "postbuild:worker": "node restore_admin.mjs",
     "restore-admin": "node restore_admin.mjs",
     "start": "next start",
     "lint": "eslint"
